@@ -1,17 +1,19 @@
-package com.thinkenterprise.graphqlio.gts.keyvaluestore;
+package com.thinkenterprise.graphqlio.server.gts.keyvaluestore;
 
+import java.io.IOException;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsGraphQLRedisService;
 import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsKeyValueStore;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -19,6 +21,19 @@ public class TestRedisKVPServiceTest {
 	
 	@Autowired
 	GtsKeyValueStore	kvp;
+
+	@Autowired
+	GtsGraphQLRedisService redisService;
+	
+	@BeforeEach
+	public void startRedis() throws IOException {
+		this.redisService.start();
+	}
+
+	@AfterEach
+	public void stopRedis() {
+		this.redisService.stop();
+	}
 	
 	@Test
     public void testKVP() {

@@ -189,10 +189,10 @@ public class GtsRecord {
 		str += dstType + "#";
 
 		/// comma separated array of dstIds
-		str += "{" + String.join(",", dstIds) + "}";
+		str += "{" + (dstIds != null  &&  dstIds.length > 0 ? String.join(",", dstIds) : "") + "}";
 		str += ".";
 		/// comma separated array of dstAttrs
-		str += "{" + String.join(",",dstAttrs) + "}";
+		str += "{" + (dstAttrs != null  &&  dstAttrs.length > 0 ? String.join(",",dstAttrs) : "") + "}";
 		
 		return str;
 	}

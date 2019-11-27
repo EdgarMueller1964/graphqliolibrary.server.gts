@@ -1,0 +1,25 @@
+
+
+
+extend type Query { 
+	_Subscription: GraphQLIOSubscription
+}
+
+ 
+type GraphQLIOSubscription {
+	subscribe:String
+	unsubscribe:String
+	subscriptions:String
+	pause:String
+	resume:String
+
+}
+
+
+scalar UUID
+
+scalar Date
+
+scalar JSON
+
+scalar Void

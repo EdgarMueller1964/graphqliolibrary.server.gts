@@ -22,7 +22,6 @@ public class GtsScope {
         this.scopeState=builder.scopeState;
         this.query=builder.query;
         this.variables=builder.variables;
-        this.addRecord(GtsRecord.builder().stringified(query).build());
     }
 
     public String getScopeId() {
@@ -35,6 +34,10 @@ public class GtsScope {
 
     public GtsScopeState getScopeState() {
         return this.scopeState;
+    }
+
+    public void  setScopeState(GtsScopeState scopeState) {
+        this.scopeState = scopeState;
     }
 
     public List<GtsRecord> getRecords() {
