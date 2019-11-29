@@ -7,11 +7,11 @@ extend type Query {
 
  
 type GraphQLIOSubscription {
-	subscribe:String
-	unsubscribe:String
-	subscriptions:String
-	pause:String
-	resume:String
+	subscribe: String
+	unsubscribe( sid: String!): String
+	subscriptions: String
+	pause( sid: String!): String
+	resume( sid: String!): String
 
 }
 

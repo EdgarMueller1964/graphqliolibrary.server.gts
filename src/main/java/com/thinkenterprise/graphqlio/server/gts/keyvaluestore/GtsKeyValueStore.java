@@ -38,6 +38,10 @@ public class GtsKeyValueStore {
     	return redisTemplate.delete(generateKey(connectionId, scopeId));
 	}
 
+	public Long deleteAllKeysForConnection(String connectionId) {
+		return redisTemplate.delete(getAllKeysForConnection(connectionId));
+	}
+	
 	public boolean hasKey (String connectionId, String scopeId) {
     	return redisTemplate.hasKey(generateKey(connectionId, scopeId));
 	}

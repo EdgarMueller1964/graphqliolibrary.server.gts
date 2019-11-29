@@ -327,5 +327,10 @@ public class GtsEvaluation {
     }
 
     
+    ///   remove all scopes for connection if connection is closed
+    public void onCloseConnection(String connectionId) {
+    	this.keyval.deleteAllKeysForConnection(connectionId);
+    }
+    
 
 }
