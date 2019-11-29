@@ -7,7 +7,11 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 @Component
 public class GtsRootMutationResolver implements GraphQLMutationResolver {
 
-	public String defaultMutation() {
-		return "defaultMutation";
+	public GtsRootMutationResolver() {
 	}
+	
+    public GtsSubscription _Subscription() {
+        return new GtsSubscription();
+    } 
+
 }

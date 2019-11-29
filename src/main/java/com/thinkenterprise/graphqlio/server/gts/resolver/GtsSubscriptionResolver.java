@@ -1,5 +1,8 @@
 package com.thinkenterprise.graphqlio.server.gts.resolver;
 
+import java.util.List;
+import java.util.UUID;
+
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thinkenterprise.graphqlio.server.gts.context.GtsContext;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
@@ -9,31 +12,32 @@ import graphql.schema.DataFetchingEnvironment;
 
 public class GtsSubscriptionResolver implements GraphQLResolver<GtsSubscription> {
 
-    public String subscribe(GtsSubscription subscription, DataFetchingEnvironment env) {
+    public UUID subscribe(GtsSubscription subscription, DataFetchingEnvironment env) {
     	GtsContext context = env.getContext();
     	GtsScope scope = context.getScope();
     	scope.setScopeState(GtsScopeState.SUBSCRIBED);
-        return scope.getScopeId();
+        return UUID.fromString(scope.getScopeId());
     }
-    public String unsubscribe(GtsSubscription subscription, DataFetchingEnvironment env) {    	
+    
+    public void  unsubscribe(GtsSubscription subscription, String sid, DataFetchingEnvironment env) {    	
     	GtsContext context = env.getContext();
     	GtsScope scope = context.getScope();
     	scope.setScopeState(GtsScopeState.UNSUBSCRIBED);
-        return scope.getScopeId();
+    	return;
     }
-    public String subscriptions(GtsSubscription subscription, DataFetchingEnvironment env) {    	
-        return "UUID";
+    public List<UUID> subscriptions(GtsSubscription subscription, DataFetchingEnvironment env) {    	
+        return null;
     }
-    public String pause(GtsSubscription subscription, DataFetchingEnvironment env) {    	
+    public void  pause(GtsSubscription subscription, String sid, DataFetchingEnvironment env) {    	
     	GtsContext context = env.getContext();
     	GtsScope scope = context.getScope();
     	scope.setScopeState(GtsScopeState.UNSUBSCRIBED);
-        return scope.getScopeId();
+        return;
     }
-    public String resume(GtsSubscription subscription, DataFetchingEnvironment env) {    	
+    public void resume(GtsSubscription subscription, String sid, DataFetchingEnvironment env) {    	
     	GtsContext context = env.getContext();
     	GtsScope scope = context.getScope();
     	scope.setScopeState(GtsScopeState.SUBSCRIBED);
-        return scope.getScopeId();
+        return;
     }
 }
