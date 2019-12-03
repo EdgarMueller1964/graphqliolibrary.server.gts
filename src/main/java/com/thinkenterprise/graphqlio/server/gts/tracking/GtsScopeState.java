@@ -12,6 +12,11 @@ public enum GtsScopeState {
         public String toString() {
             return "unsubscribed";
         }
-    }
-    
+    },
+    PAUSED {
+        @Override
+        public String toString() {
+            return "paused";
+        }
+    }    
 }

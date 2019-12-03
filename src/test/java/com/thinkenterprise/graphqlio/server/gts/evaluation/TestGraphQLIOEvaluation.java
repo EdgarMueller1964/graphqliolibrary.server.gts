@@ -1,7 +1,10 @@
 package com.thinkenterprise.graphqlio.server.gts.evaluation;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -11,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.thinkenterprise.graphqlio.server.gts.evaluation.GtsEvaluation;
+import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsGraphQLRedisService;
 import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsKeyValueStore;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
@@ -27,6 +31,21 @@ public class TestGraphQLIOEvaluation {
     private GtsKeyValueStore keyval;
 	
 	@Autowired
+	GtsGraphQLRedisService redisService;
+	
+	@BeforeEach
+	public void startRedis() throws IOException {
+		this.redisService.start();
+	}
+
+	@AfterEach
+	public void stopRedis() {
+		this.redisService.stop();
+	}
+    
+    
+    
+    @Autowired
 	GtsEvaluation graphQLIOEvaluation;
 	
 //// test data	
@@ -40,6 +59,13 @@ public class TestGraphQLIOEvaluation {
 	final String strRecordMutationUpdateOtherAttribute = "update(one)->item#{id3}.{telephone}";
 	
 	final String strRecordMutationUpdateCardItems = "update(one)->card#{id1}.{items}";
+
+	final GtsRecord recodRecordQuerySid1 = 
+			GtsRecord.builder().stringified(strRecordQuerySid1).build();		
+	final GtsRecord recodRecordQuerySid2 = 
+			GtsRecord.builder().stringified(strRecordQuerySid2).build();		
+	final GtsRecord recodRecordQuerySid3 = 
+			GtsRecord.builder().stringified(strRecordQuerySid3).build();		
 	
 	final GtsRecord recordMutationUpdateItemInQuerySid1 = 
 			GtsRecord.builder().stringified(strRecordMutationUpdateItemInQuerySid1).build();		
@@ -65,6 +91,7 @@ public class TestGraphQLIOEvaluation {
 			GtsScope.builder().withScopeId("Sid3").withConnectionId("Cid1").withQuery(strRecordQuerySid3).withState(GtsScopeState.SUBSCRIBED).build();	
 
 	
+	
 	@Test
 	public void testMutationUpdateItemOutdatesScopeUseCase1() {
 
@@ -77,9 +104,14 @@ public class TestGraphQLIOEvaluation {
 		
 		List<String> outdatedSids = null;		
 
+		///  need to add Query Records !!! withQuery adds query sent by client. 
+		scopeSid1Cid1.addRecord(recodRecordQuerySid1);		
+		scopeSid2Cid1.addRecord(recodRecordQuerySid2);		
+		
+		
 		//// update mutation in scope 1 outdates "Scope" sid1 but not sid2
 		scopeSid1Cid1.addRecord(recordMutationUpdateItemInQuerySid1);		
-		//// update mutation in scope 2 outdates "Scope" sid1 but not side
+		//// update mutation in scope 2 outdates "Scope" sid1 but not sid2
 		scopeSid2Cid1.addRecord(recordMutationUpdateItemInQuerySid1);		
 
         List<String> records1 = scopeSid1Cid1.getStringifiedRecords();
@@ -111,7 +143,11 @@ public class TestGraphQLIOEvaluation {
 				
 		List<String> outdatedSids = null;		
 		
-		
+		///  need to add Query Records !!! withQuery adds query sent by client. 
+		scopeSid1Cid1.addRecord(recodRecordQuerySid1);		
+		///  need to add Query Records !!! withQuery adds query sent by client. 
+		scopeSid3Cid1.addRecord(recodRecordQuerySid3);		
+
 		//// card update mutation in scope 1 outdates "Scope" sid3  (read card items)
 		scopeSid1Cid1.addRecord(recordMutationUpdateCardItems);
 
@@ -142,6 +178,10 @@ public class TestGraphQLIOEvaluation {
          */		
 		
 		List<String> outdatedSids = null;		
+		
+		///  need to add Query Records !!! withQuery adds query sent by client. 
+		scopeSid1Cid1.addRecord(recodRecordQuerySid1);		
+		scopeSid2Cid1.addRecord(recodRecordQuerySid2);		
 		
 		//// delete mutation in scope 1 outdates "Scope" sid1 and sid2
 		scopeSid1Cid1.addRecord(recordMutationDeleteItemInQuerySid1);
@@ -180,6 +220,11 @@ public class TestGraphQLIOEvaluation {
          * "Read:Many", "Update (other item, and non matching attribute") ==> does not outdate queries in sid1 or sid2
          */		
 		List<String> outdatedSids = null;		
+
+		///  need to add Query Records !!! withQuery adds query sent by client. 
+		scopeSid1Cid1.addRecord(recodRecordQuerySid1);		
+		scopeSid2Cid1.addRecord(recodRecordQuerySid2);		
+
 		
 		// updates item id10 which is not in returned list, but "read many
 		scopeSid1Cid1.addRecord(recordMutationUpdateOtherItem);

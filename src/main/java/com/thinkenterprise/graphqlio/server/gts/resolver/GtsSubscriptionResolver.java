@@ -25,13 +25,15 @@ public class GtsSubscriptionResolver implements GraphQLResolver<GtsSubscription>
     	scope.setScopeState(GtsScopeState.UNSUBSCRIBED);
     	return;
     }
-    public List<UUID> subscriptions(GtsSubscription subscription, DataFetchingEnvironment env) {    	
+    
+	// Todo implementation
+    public List<UUID> subscriptions(GtsSubscription subscription, DataFetchingEnvironment env) {
         return null;
     }
     public void  pause(GtsSubscription subscription, String sid, DataFetchingEnvironment env) {    	
     	GtsContext context = env.getContext();
     	GtsScope scope = context.getScope();
-    	scope.setScopeState(GtsScopeState.UNSUBSCRIBED);
+    	scope.setScopeState(GtsScopeState.PAUSED);
         return;
     }
     public void resume(GtsSubscription subscription, String sid, DataFetchingEnvironment env) {    	

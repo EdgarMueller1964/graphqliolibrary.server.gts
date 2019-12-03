@@ -24,7 +24,10 @@ public class GtsGraphQLRedisService {
 
 		// this.embeddedRedisServer = new RedisServer(redisProperties.getRedisPort());
 
-		this.embeddedRedisServer = RedisServer.builder().port(redisProperties.getRedisPort())
+		this.embeddedRedisServer = RedisServer
+				.builder()
+				.port(redisProperties
+						.getRedisPort())
 				// .redisExecProvider(customRedisExec) //com.github.kstyrc (not
 				// com.orange.redis-embedded)
 				.setting("maxmemory 128M") // maxheap 128M

@@ -196,6 +196,8 @@ public class GtsEvaluation {
                  * ...without subscriptions can be just destroyed (and the processing
                  * short-circuited)
                  */
+            	
+            	/* To check: what about paused scopes???? */
 
                 // scope.destroy(); ??? Todo: parent needs to destroy scope?
                 this.keyval.delete(connectionId, scopeId); /// delete scope records
@@ -261,7 +263,8 @@ public class GtsEvaluation {
 
             StringBuilder sb = new StringBuilder();
             for (String record : strRecords) {
-                sb.append(record);
+            	if ( record != null  &&  record.length() > 0)
+            		sb.append(record);
             }
             stringifiedRecords = sb.toString();
             recordsChecked = checkedRecords.containsKey(stringifiedRecords);
@@ -296,34 +299,52 @@ public class GtsEvaluation {
         return false;
     }
 
-    // CR 11072019 This Algorithm is open 
+    ///  process an outdated event  */
+    ///    __scopeOutdatedEvent (sids)    
     // Map<cid, <sids>>
 	// method is called by GtsWebSocketHandler::handleTextMessage
     public Map<String, Set<String>> evaluateOutdatedsSidsPerCid(List<String> sids,
             Collection<GtsConnection> connections) {
 
-    	Map<String, Set<String>> sidsPerCid = new HashMap<>();
-    	
-        Set<String> keys = this.keyval.getAllKeys();
-        keys.forEach(key -> {
-        	
-            String cid = GtsKeyValueStore.getConnectionId(key);
-            String sid = GtsKeyValueStore.getScopeId(key);
+    	if (connections == null)
+    		return null;
 
-            if (sids.contains(sid)) {
-            	if (!sidsPerCid.containsKey(cid)) {
-            		Set<String> sidSet = new HashSet<>(); 
-            		sidSet.add(sid);
-            		sidsPerCid.put(cid,  sidSet);
+    	Map<String, Set<String>> sidsPerCid = new HashMap<>();
+        connections.forEach((conn) -> {
+        	if ( conn == null)
+        		return;
+        	String cid = conn.getConnectionId();
+
+        	conn.scopes().forEach((scope) -> { 
+        		if (scope == null)
+        			return;
+        		
+            	String sid = scope.getScopeId();
+  
+            	if ( scope.getScopeState() == GtsScopeState.SUBSCRIBED ) {
+            		if (sids.contains(sid)) {
+                    	if (!sidsPerCid.containsKey(cid)) {
+                    		Set<String> sidSet = new HashSet<>(); 
+                    		sidSet.add(sid);
+                    		sidsPerCid.put(cid,  sidSet);
+                    	}
+                    	else {
+                    		sidsPerCid.get(cid).add(sid);
+                    	}            	
+                    }
             	}
-            	else {
-            		sidsPerCid.get(cid).add(sid);
-            	}            	
-            }
+            	else if (scope.getScopeState() == GtsScopeState.PAUSED ) {
+            		
+            		//// do we need to set scope outdated???
+            		//// see code node.js code in __scopeOutdatedEvent
+            		
+            	}
+            	            	
+            });
         	
         });
-    	
-        return sidsPerCid;
+    	    	
+    	return sidsPerCid;
     }
 
     

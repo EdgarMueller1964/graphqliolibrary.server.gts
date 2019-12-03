@@ -11,6 +11,9 @@ import org.springframework.web.socket.WebSocketSession;
 public class GtsConnection {
 
     private String connectionId;
+
+    //// don't need a CopyOnWriteArrayList as scopes are not removed from connection!!!
+    //// Question: should we provide a concept of "closing/destroying" scopes?
     private List<GtsScope> scopes = new ArrayList<>();
 
     public GtsConnection(Builder builder) {
@@ -27,6 +30,17 @@ public class GtsConnection {
 
     public List<GtsScope> scopes() {
         return this.scopes;
+    }
+    
+    public GtsScope getScopeById(String scopeId) {
+        for (GtsScope scope : scopes) {
+            if (scope.getScopeId().equals(scopeId)) {
+                return scope;
+            }
+        }
+        
+        // no scope with scopeId in list
+        return null;
     }
 
     public static Builder builder() {
