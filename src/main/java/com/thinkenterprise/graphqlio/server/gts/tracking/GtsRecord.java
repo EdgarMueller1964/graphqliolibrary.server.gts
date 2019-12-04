@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.thinkenterprise.graphqlio.server.gts.exceptions.GtsRecordFormatException;
+
 public class GtsRecord {
 
 	
@@ -330,6 +332,9 @@ public class GtsRecord {
 		        	dstIds(matcher.group(7).split("\\,"));
 		        	dstAttrs(matcher.group(8).split("\\,"));	        	
 		        }		        
+			}
+			else {
+				throw new GtsRecordFormatException(String.format("Record (%s) does not match expected GtsRecord format", strRecord));
 			}
 			
 		}

@@ -10,15 +10,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
+import com.thinkenterprise.graphqlio.server.gts.exceptions.GtsScopeEvaluationException;
 import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsKeyValueStore;
+import com.thinkenterprise.graphqlio.server.gts.resolver.GtsSubscriptionResolver;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsConnection;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScopeState;
+
+import graphql.GraphQLException;
+
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsArityType;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsOperationType;
 
@@ -28,30 +34,11 @@ import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsOperationT
 @Component
 public class GtsEvaluation {
 
+	private final Logger logger = LoggerFactory.getLogger(GtsEvaluation.class);
+	
+	
     @Autowired
     private GtsKeyValueStore keyval;
-
-    private String recordStringify(GtsRecord record) {
-        // Description : Serialize/Serialize GtsRecord to String according regular
-        // expression
-        // "^(?:(.+?)#(.+?)\.(.+?)->)?(.+?)\((.+?)\)->(.+?)#\{(.*?)\}\.\{(.+?)\}$"
-        // Source :
-        // https://github.com/rse/graphql-tools-subscribe/blob/master/src/gts-3-evaluation.js
-        // __recordStringify {
-
-        return record.stringify();
-    }
-
-    private GtsRecord recordUnstringify(String record) {
-        // Description : Unserialize/Unstringfy String into GtsRecord using
-        // regular expression
-        // "^(?:(.+?)#(.+?)\.(.+?)->)?(.+?)\((.+?)\)->(.+?)#\{(.*?)\}\.\{(.+?)\}$"
-        // Source :
-        // https://github.com/rse/graphql-tools-subscribe/blob/master/src/gts-3-evaluation.js
-        // __recordUnstringify
-
-        return GtsRecord.builder().stringified(record).build();
-    }
 
     private static boolean outdated(List<GtsRecord> newRecords, List<GtsRecord> oldRecords) {
 
@@ -139,11 +126,10 @@ public class GtsEvaluation {
         		  .filter(listB::contains)
         		  .collect(Collectors.toSet());
 
-        return result.size() > 0;
+        return !result.isEmpty();
     }
 
     public List<String> evaluateOutdatedSids(GtsScope scope) {
-        // ToDo : Implementation of the Algorithm
         // Description : Activity Diagramm
         // Source :
         // https://github.com/rse/graphql-tools-subscribe/blob/master/src/gts-3-evaluation.js
@@ -225,7 +211,7 @@ public class GtsEvaluation {
                 }
             });
 
-            // CR 11072019 We should discuss the Algorithm
+            // ToDo: CR 11072019 We should discuss the Algorithm
             HashMap<String, Boolean> checkedRecords = new HashMap<>(); // ??? key serialized String of records???? !!!!
 
             sids.keySet().forEach(sid -> {
@@ -234,10 +220,19 @@ public class GtsEvaluation {
                     return;
 
                 sids.get(sid).forEach(cid -> {
-
-                    boolean outdated = evaluateOutdatedSidPerCid(checkedRecords, recordsWrite, cid, sid);
-                    if (outdated)
-                        outdatedSids.put(sid, true);
+                  
+                    try {
+                        boolean outdated = evaluateOutdatedSidPerCid(checkedRecords, recordsWrite, cid, sid);
+                        if (outdated)
+                            outdatedSids.put(sid, true);
+                    }
+                    catch (GtsScopeEvaluationException evalException) {
+                    	/// do ignore here.                    	                    	
+                    }
+                    catch(GraphQLException e) {
+                    	////  other exceptions??? 
+                    }
+                    
                 });
             });
         }
@@ -248,8 +243,6 @@ public class GtsEvaluation {
         return list;
     }
 
-    // CR 11072019 What is this
-    
     /// evaluate if scope is outdated for a particular connection
     private boolean evaluateOutdatedSidPerCid(Map<String, Boolean> checkedRecords, /// passes HashMap in real
             List<GtsRecord> recordsWrite, String connectionId, String scopeId) {
@@ -258,7 +251,7 @@ public class GtsEvaluation {
         String[] strRecords = this.keyval.getRecords(connectionId, scopeId);
         boolean recordsChecked = false;
         String stringifiedRecords = null;
-        /// should be discussed with Ralf if this is really necessary and saves performance
+        /// ToDo: should be discussed with Ralf if "recordsChecked" this is really necessary and saves performance
         if (strRecords != null && strRecords.length > 0) {
 
             StringBuilder sb = new StringBuilder();
@@ -269,31 +262,29 @@ public class GtsEvaluation {
             stringifiedRecords = sb.toString();
             recordsChecked = checkedRecords.containsKey(stringifiedRecords);
         }
+        else {
+        	logger.warn(String.format("Empty GtsRecord List found for connection id (%s) and scope id (%s)", connectionId, scopeId));
+            this.keyval.delete(connectionId, scopeId);
+            throw new GtsScopeEvaluationException(String.format("Empty GtsRecord List found for connection id (%s) and scope id (%s)", connectionId, scopeId));
+        }
 
         if (!recordsChecked) {
-
-            if (strRecords == null || strRecords.length == 0) {
-                this.keyval.delete(connectionId, scopeId);
-            } else {
-                List<GtsRecord> recordsRead = new ArrayList<>();
-                for (String strRecord : strRecords) {
-                	GtsRecord record = GtsRecord.builder().stringified(strRecord).build();
-                	if ( record.op() ==  GtsOperationType.READ)
-                		recordsRead.add(record);
-                }
-
-                // check whether writes outdate reads
-                boolean outdated = GtsEvaluation.outdated(recordsWrite, recordsRead);
-
-                // remember that these scope records were already checked
-                if (stringifiedRecords != null)
-                    checkedRecords.put(stringifiedRecords, true);
-
-                if (outdated)
-                    return true;
-
+            List<GtsRecord> recordsRead = new ArrayList<>();
+            for (String strRecord : strRecords) {
+            	GtsRecord record = GtsRecord.builder().stringified(strRecord).build();
+            	if ( record.op() ==  GtsOperationType.READ)
+            		recordsRead.add(record);
             }
 
+            // check whether writes outdate reads
+            boolean outdated = GtsEvaluation.outdated(recordsWrite, recordsRead);
+
+            // remember that these scope records were already checked
+            if (stringifiedRecords != null)
+                checkedRecords.put(stringifiedRecords, true);
+
+            if (outdated)
+                return true;
         }
 
         return false;
@@ -335,7 +326,7 @@ public class GtsEvaluation {
             	}
             	else if (scope.getScopeState() == GtsScopeState.PAUSED ) {
             		
-            		//// do we need to set scope outdated???
+            		//// ToDo: do we need to set scope outdated???
             		//// see code node.js code in __scopeOutdatedEvent
             		
             	}
