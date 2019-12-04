@@ -49,6 +49,11 @@ public class GtsKeyValueStore {
 	public Set<String> getAllKeys()  {
     	return redisTemplate.keys("cid:*:sid:*");
 	}
+
+	/// delete all keys; e.g. "cleanup" at the very beginning when server starts
+	public void deleteAllKeys() { 
+		redisTemplate.delete(getAllKeys());
+	}
 	
 	public Set<String> getAllKeysForConnection(String connectionId)  {
 		String keyPattern = "cid:" + connectionId + ":sid:*";
