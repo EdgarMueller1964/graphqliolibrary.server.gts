@@ -24,51 +24,29 @@
  * **  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * *
  ******************************************************************************/
-package com.thinkenterprise.graphqlio.server.gts.exceptions;
+package com.thinkenterprise.graphqlio.server.gts.actuator;
 
-import java.util.Collections;
-import java.util.List;
+/**
+ * Interface providing counter information for Connections, Scopes and Records 
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 
-import graphql.ErrorClassification;
-import graphql.ErrorType;
-import graphql.GraphQLError;
-import graphql.GraphQLException;
-import graphql.language.SourceLocation;
 
-public class GtsScopeEvaluationException extends GraphQLException implements GraphQLError {
+public interface GtsCounter {
 
-	private static final long serialVersionUID = 1L;
-    private List<SourceLocation> sourceLocations;
+	public void incrementConnectionCounter();
+	public void decrementConnectionCounter();
+	public void decrementConnectionCounter(long byNumber);
+
+	public void incrementScopeCounter();
+	public void decrementScopeCounter();
+	public void decrementScopeCounter(long byNumber);
+		
+	public void incrementRecordCounter();
+	public void decrementRecordCounter();
+	public void decrementRecordCounter(long byNumber);
+
 	
-	
-	public GtsScopeEvaluationException() {
-	}
-
-	public GtsScopeEvaluationException(String message) {
-		super(message);
-	}
-
-	public GtsScopeEvaluationException(Throwable cause) {
-		super(cause);
-	}
-
-	public GtsScopeEvaluationException(String message, Throwable cause) {
-		super(message, cause);
-	}
-	
-    public GtsScopeEvaluationException(String message, Throwable cause, SourceLocation sourceLocation) {
-        super(message, cause);
-        this.sourceLocations = Collections.singletonList(sourceLocation);
-    }
-	
-	@Override
-	public List<SourceLocation> getLocations() {
-        return sourceLocations;
-	}
-
-	@Override
-	public ErrorClassification getErrorType() {
-        return ErrorType.ValidationError;
-	}
-
 }
