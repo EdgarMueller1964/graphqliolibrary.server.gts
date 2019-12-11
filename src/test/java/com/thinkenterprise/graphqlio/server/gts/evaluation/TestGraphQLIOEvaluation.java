@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.Assert;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thinkenterprise.graphqlio.server.gts.evaluation.GtsEvaluation;
 import com.thinkenterprise.graphqlio.server.gts.keyvaluestore.GtsGraphQLRedisService;
@@ -21,7 +22,9 @@ import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScope;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScopeState;
 
 
-@RunWith(SpringRunner.class)
+@Tag("annotations")
+@Tag("junit5")
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestGraphQLIOEvaluation {
 	
@@ -123,12 +126,12 @@ public class TestGraphQLIOEvaluation {
 		keyval.putRecords(scopeSid2Cid1.getConnectionId(), scopeSid2Cid1.getScopeId(), scopeRecords2);
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid1Cid1);
-		Assert.assertTrue(outdatedSids.size() == 1);
-		Assert.assertTrue(outdatedSids.contains("Sid1"));	
+		Assertions.assertTrue(outdatedSids.size() == 1);
+		Assertions.assertTrue(outdatedSids.contains("Sid1"));	
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid2Cid1);
-		Assert.assertTrue(outdatedSids.size() == 1);
-		Assert.assertTrue(outdatedSids.contains("Sid1")); 	
+		Assertions.assertTrue(outdatedSids.size() == 1);
+		Assertions.assertTrue(outdatedSids.contains("Sid1")); 	
 	}
 
 	
@@ -161,8 +164,8 @@ public class TestGraphQLIOEvaluation {
 		
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid1Cid1);
-		Assert.assertTrue(outdatedSids.size() == 1);
-		Assert.assertTrue(outdatedSids.contains("Sid3"));	
+		Assertions.assertTrue(outdatedSids.size() == 1);
+		Assertions.assertTrue(outdatedSids.contains("Sid3"));	
 		
 	}	
 	
@@ -197,14 +200,14 @@ public class TestGraphQLIOEvaluation {
 		keyval.putRecords(scopeSid2Cid1.getConnectionId(), scopeSid2Cid1.getScopeId(), scopeRecords2);
 				
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid1Cid1);
-		Assert.assertTrue(outdatedSids.size() == 2);		
-		Assert.assertTrue(outdatedSids.contains("Sid1"));
-		Assert.assertTrue(outdatedSids.contains("Sid2"));
+		Assertions.assertTrue(outdatedSids.size() == 2);		
+		Assertions.assertTrue(outdatedSids.contains("Sid1"));
+		Assertions.assertTrue(outdatedSids.contains("Sid2"));
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid2Cid1);
-		Assert.assertTrue(outdatedSids.size() == 2);		
-		Assert.assertTrue(outdatedSids.contains("Sid1"));
-		Assert.assertTrue(outdatedSids.contains("Sid2"));
+		Assertions.assertTrue(outdatedSids.size() == 2);		
+		Assertions.assertTrue(outdatedSids.contains("Sid1"));
+		Assertions.assertTrue(outdatedSids.contains("Sid2"));
 		
 	}
 	
@@ -242,12 +245,12 @@ public class TestGraphQLIOEvaluation {
 		keyval.putRecords(scopeSid2Cid1.getConnectionId(), scopeSid2Cid1.getScopeId(), scopeRecords2);
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid1Cid1);
-		Assert.assertTrue(outdatedSids.size() == 1);
-		Assert.assertTrue(outdatedSids.contains("Sid1"));
+		Assertions.assertTrue(outdatedSids.size() == 1);
+		Assertions.assertTrue(outdatedSids.contains("Sid1"));
 		
 		outdatedSids = graphQLIOEvaluation.evaluateOutdatedSids(scopeSid2Cid1);
-		Assert.assertTrue(outdatedSids.size() == 1);
-		Assert.assertTrue(outdatedSids.contains("Sid1"));
+		Assertions.assertTrue(outdatedSids.size() == 1);
+		Assertions.assertTrue(outdatedSids.contains("Sid1"));
 	}
 	
 

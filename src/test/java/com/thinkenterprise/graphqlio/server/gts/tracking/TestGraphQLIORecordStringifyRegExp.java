@@ -1,17 +1,21 @@
 package com.thinkenterprise.graphqlio.server.gts.tracking;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.Assert;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsArityType;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsRecord.GtsOperationType;
 
-@RunWith(SpringRunner.class)
+
+@Tag("annotations")
+@Tag("junit5")
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestGraphQLIORecordStringifyRegExp {
 
@@ -49,7 +53,7 @@ public class TestGraphQLIORecordStringifyRegExp {
 		
 		GtsRecord recordFromString = GtsRecord.builder().stringified(strRecord).build();
 		
-		Assert.assertTrue(recordFromString != null && record != null && recordFromString.equals(record));
+		Assertions.assertTrue(recordFromString != null && record != null && recordFromString.equals(record));
 		
 		
 	}

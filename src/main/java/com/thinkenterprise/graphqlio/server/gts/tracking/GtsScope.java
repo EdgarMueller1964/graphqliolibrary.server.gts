@@ -77,7 +77,8 @@ public class GtsScope {
     }
     
     public void addRecord(GtsRecord record) {
-    	this.gtsCounter.incrementRecordCounter();
+    	if (gtsCounter != null)
+    		this.gtsCounter.incrementRecordCounter();
         this.records.add(record);
     }
 
