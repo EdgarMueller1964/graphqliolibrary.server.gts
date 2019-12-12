@@ -34,6 +34,14 @@ import java.util.regex.Pattern;
 
 import com.thinkenterprise.graphqlio.server.gts.exceptions.GtsRecordFormatException;
 
+
+/**
+ * GtsRecord
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+*/
+
 public class GtsRecord {
 
 	

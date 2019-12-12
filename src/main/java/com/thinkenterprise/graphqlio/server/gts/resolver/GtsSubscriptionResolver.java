@@ -40,6 +40,14 @@ import com.thinkenterprise.graphqlio.server.gts.tracking.GtsScopeState;
 
 import graphql.schema.DataFetchingEnvironment;
 
+
+/**
+ * GraphQL IO Subscription Resolver
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public class GtsSubscriptionResolver implements GraphQLResolver<GtsSubscription> {
 
 	private final Logger logger = LoggerFactory.getLogger(GtsSubscriptionResolver.class);

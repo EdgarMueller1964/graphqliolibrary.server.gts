@@ -30,6 +30,12 @@ import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
+/**
+ * GraphQL IO Root Query Resolver
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 
 @Component
 public class GtsRootQueryResolver implements GraphQLQueryResolver {

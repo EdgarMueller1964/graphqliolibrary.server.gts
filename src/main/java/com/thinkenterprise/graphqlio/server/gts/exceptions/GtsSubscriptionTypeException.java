@@ -26,6 +26,12 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.gts.exceptions;
 
+/**
+ * Exception to be thrown if client tries "unsubscribe, pause and resume" methods are not run as mutations 
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 public class GtsSubscriptionTypeException extends RuntimeException {
 
 	

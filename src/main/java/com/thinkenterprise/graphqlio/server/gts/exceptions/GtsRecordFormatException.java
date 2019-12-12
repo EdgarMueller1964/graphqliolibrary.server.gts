@@ -35,6 +35,13 @@ import graphql.GraphQLError;
 import graphql.GraphQLException;
 import graphql.language.SourceLocation;
 
+/**
+ * Exception to be thrown if Record format does not match specification
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public class GtsRecordFormatException extends GraphQLException implements GraphQLError {
 
 	private static final long serialVersionUID = 1L;

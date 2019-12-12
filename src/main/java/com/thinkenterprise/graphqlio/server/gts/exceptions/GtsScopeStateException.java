@@ -34,6 +34,14 @@ import graphql.GraphQLError;
 import graphql.GraphQLException;
 import graphql.language.SourceLocation;
 
+/**
+ * Exception to be thrown if Scope state is not as exepcted
+ * e.g. it is tried to "unsubscribe" a scope not having been subscribed before 
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
 public class GtsScopeStateException extends GraphQLException implements GraphQLError {
 
 	private static final long serialVersionUID = 1L;

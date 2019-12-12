@@ -35,7 +35,10 @@ import com.thinkenterprise.graphqlio.server.gts.tracking.GtsConnection.Builder;
 
 /**
  * GtsScope
- */
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+*/
 public class GtsScope {
 
     private String scopeId;

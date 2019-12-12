@@ -31,6 +31,14 @@ import org.springframework.stereotype.Component;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 
+/**
+ * GraphQL IO Root Mutation Resolver
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
+
+
 @Component
 public class GtsRootMutationResolver implements GraphQLMutationResolver {
 

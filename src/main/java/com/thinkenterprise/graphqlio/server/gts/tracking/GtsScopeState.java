@@ -26,6 +26,14 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.gts.tracking;
 
+
+/**
+ * GtsScopeState
+ *
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+*/
+
 public enum GtsScopeState {
 	SUBSCRIBED {
 		@Override

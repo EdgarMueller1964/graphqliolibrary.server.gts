@@ -35,6 +35,12 @@ import graphql.GraphQLError;
 import graphql.GraphQLException;
 import graphql.language.SourceLocation;
 
+/**
+ * Exception to be thrown if scope evaluation process fails
+ * 
+ * @author Michael Schäfer
+ * @author Dr. Edgar Müller
+ */
 public class GtsScopeEvaluationException extends GraphQLException implements GraphQLError {
 
 	private static final long serialVersionUID = 1L;

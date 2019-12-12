@@ -36,7 +36,10 @@ import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
 
 /**
  * WebSocketConnection
+ *
+ * @author Michael Schäfer
  */
+
 public class GtsConnection {
 	
 	private GtsCounter gtsCounter = null;
