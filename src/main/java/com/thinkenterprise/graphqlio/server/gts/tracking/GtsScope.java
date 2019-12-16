@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
+import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNames;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsConnection.Builder;
 import com.thinkenterprise.uuid.domain.NsUrl;
 import com.thinkenterprise.uuid.domain.TypeFormat;
@@ -86,7 +87,7 @@ public class GtsScope {
     
     public void addRecord(GtsRecord record) {
     	if (gtsCounter != null)
-    		this.gtsCounter.incrementRecordCounter();
+    		this.gtsCounter.modifyCounter(GtsCounterNames.RECORDS, 1L);
         this.records.add(record);
     }
 
@@ -99,8 +100,8 @@ public class GtsScope {
     public void onDestroy() {
     	
     	if (gtsCounter != null) {
-    		gtsCounter.decrementScopeCounter();
-    		gtsCounter.decrementRecordCounter(this.records.size());
+    		gtsCounter.modifyCounter(GtsCounterNames.SCOPES, -1L);;
+    		gtsCounter.modifyCounter(GtsCounterNames.RECORDS, -this.records.size());
     		
     	}
     }
@@ -173,7 +174,7 @@ public class GtsScope {
 	            	            
 			}
             if (this.gtsCounter != null) 
-            	this.gtsCounter.incrementScopeCounter();
+            	this.gtsCounter.modifyCounter(GtsCounterNames.SCOPES, 1L);
 
             return new GtsScope(this);
 		} 

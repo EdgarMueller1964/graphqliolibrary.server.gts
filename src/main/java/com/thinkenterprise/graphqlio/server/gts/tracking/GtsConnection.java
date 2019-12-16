@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.WebSocketSession;
 
 import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
+import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounterNames;
 
 /**
  * WebSocketConnection
@@ -74,7 +75,7 @@ public class GtsConnection {
 
     	this.scopes.clear();  
         if (gtsCounter != null) {
-            gtsCounter.decrementConnectionCounter();        	
+            gtsCounter.modifyCounter(GtsCounterNames.SCOPES, 1L);        	
         }
     }
     
@@ -115,7 +116,7 @@ public class GtsConnection {
 		public GtsConnection build() {
             this.connectionId=session.getId();
             if (this.gtsCounter != null) 
-            	this.gtsCounter.incrementConnectionCounter();
+            	this.gtsCounter.modifyCounter(GtsCounterNames.CONNECTIONS, 1L);;
             return new GtsConnection(this);
 		} 
 

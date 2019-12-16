@@ -26,20 +26,31 @@
  ******************************************************************************/
 package com.thinkenterprise.graphqlio.server.gts.actuator;
 
+
 /**
- * Interface providing counter information for Connections, Scopes and Records 
+ * GtsScopeState
  *
  * @author Michael Schäfer
  * @author Dr. Edgar Müller
- */
+*/
 
-public interface GtsCounter {
-	
-	public GtsCounterNames[] getCounters();
-
-	public void registerCounterNotification( GtsCounterNotification counterNotification);
-	
-	/// value byNumber   +/- 
-	public void modifyCounter(GtsCounterNames name, long byNumber);
-	
+public enum GtsCounterNames {
+	CONNECTIONS {
+		@Override
+        public String toString() {
+            return "connections";
+        }
+    },
+    SCOPES {
+        @Override
+        public String toString() {
+            return "scopes";
+        }
+    },
+    RECORDS {
+        @Override
+        public String toString() {
+            return "records";
+        }
+    }    
 }
