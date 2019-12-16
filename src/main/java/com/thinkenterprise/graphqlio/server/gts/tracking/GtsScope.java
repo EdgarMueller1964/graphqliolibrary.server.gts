@@ -32,6 +32,11 @@ import java.util.UUID;
 
 import com.thinkenterprise.graphqlio.server.gts.actuator.GtsCounter;
 import com.thinkenterprise.graphqlio.server.gts.tracking.GtsConnection.Builder;
+import com.thinkenterprise.uuid.domain.NsUrl;
+import com.thinkenterprise.uuid.domain.TypeFormat;
+import com.thinkenterprise.uuid.domain.UUIDDto;
+import com.thinkenterprise.uuid.helpers.A2HS;
+import com.thinkenterprise.uuid.helpers.UUIDHelper;
 
 /**
  * GtsScope
@@ -153,13 +158,62 @@ public class GtsScope {
 			if (this.scopeId == null) {
 	            // scopeId = .... from query and variables and some other stuff 
 				///           this.scopeId = this.variables + this.query;
-	            this.scopeId = UUID.randomUUID().toString();
+//	            this.scopeId = UUID.randomUUID().toString();
+
+				
+	            String uuid = generateUUID	(5
+	            							, NsUrl.NS_URL
+	            							, "http://engelschall.com/ns/graphql-query"
+	            							, this.variables + this.query
+	            							);
+	            if ( uuid != null && !uuid.isEmpty()) 
+	            	this.scopeId = uuid;
+	            else
+	            	this.scopeId = UUID.randomUUID().toString();
+	            	            
 			}
             if (this.gtsCounter != null) 
             	this.gtsCounter.incrementScopeCounter();
 
             return new GtsScope(this);
 		} 
+		
+		
+		
+//        const data = ObjectHasher.sort({ query, variables })
+//        const ns = new UUID(5, "ns:URL", "http://engelschall.com/ns/graphql-query")
+//        this.sid = (new UUID(5, ns, data)).format()
+
+		private String generateUUID(int version, NsUrl urlFormat, String url, String data) {
+			
+			UUIDDto uUUIDOptions = new UUIDDto();
+			uUUIDOptions.setData(url);
+			uUUIDOptions.setNsUrl(urlFormat);
+			uUUIDOptions.setVersion(version);
+			uUUIDOptions.setTypeFormatNs(TypeFormat.STD);
+
+			try {
+				
+				long[] uuid = UUIDHelper.generateUUIDLongArray(uUUIDOptions, uUUIDOptions.getVersion());
+				String uuidFormat = A2HS.format(uUUIDOptions.getTypeFormatNs().getTypeFormat(), uuid);
+
+				uUUIDOptions.setNs(uuid);
+				uUUIDOptions.setUuidFormat(uuidFormat);
+				uUUIDOptions.setData(data);
+				uUUIDOptions.setVersionSid(version);
+				uUUIDOptions.setTypeFormatSid(TypeFormat.STD);
+				long[] sid = UUIDHelper.generateUUIDLongArray(uUUIDOptions, uUUIDOptions.getVersionSid());
+				return A2HS.format(uUUIDOptions.getTypeFormatSid().getTypeFormat(), sid);
+
+
+			} catch (Exception e) {
+
+				return null;
+			}
+			
+		}
+
+		
 
 	}
     
